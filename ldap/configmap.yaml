@@ -162,7 +162,7 @@ data:
     dn: uid=dev7,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: dev  
+    userPassword: dev
     
     dn: uid=dev8,ou=Users,dc=example,dc=com
     changetype: add
@@ -178,7 +178,7 @@ data:
     dn: uid=dev8,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: dev 
+    userPassword: dev
     
     dn: uid=dev9,ou=Users,dc=example,dc=com
     changetype: add
@@ -194,7 +194,7 @@ data:
     dn: uid=dev9,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: dev 
+    userPassword: dev
     
     dn: uid=dev10,ou=Users,dc=example,dc=com
     changetype: add
@@ -210,7 +210,7 @@ data:
     dn: uid=dev10,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: dev   
+    userPassword: dev
     
     dn: uid=dev11,ou=Users,dc=example,dc=com
     changetype: add
@@ -242,7 +242,7 @@ data:
     dn: uid=dev12,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: dev    
+    userPassword: dev
 
     dn: uid=eric,ou=Users,dc=example,dc=com
     changetype: add
@@ -258,7 +258,7 @@ data:
     dn: uid=eric,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     dn: uid=erin,ou=Users,dc=example,dc=com
     changetype: add
@@ -274,7 +274,7 @@ data:
     dn: uid=erin,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     dn: uid=vanessa,ou=Users,dc=example,dc=com
     changetype: add
@@ -290,7 +290,7 @@ data:
     dn: uid=vanessa,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     dn: uid=mary,ou=Users,dc=example,dc=com
     changetype: add
@@ -306,7 +306,7 @@ data:
     dn: uid=mary,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     dn: uid=julia,ou=Users,dc=example,dc=com
     changetype: add
@@ -322,7 +322,7 @@ data:
     dn: uid=julia,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     dn: uid=matt,ou=Users,dc=example,dc=com
     changetype: add
@@ -338,7 +338,7 @@ data:
     dn: uid=matt,ou=Users,dc=example,dc=com
     changetype: modify
     add: userPassword
-    userPassword: admin    
+    userPassword: admin
 
     # retail banking
 
