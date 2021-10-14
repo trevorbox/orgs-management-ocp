@@ -13,6 +13,6 @@ metadata:
 spec:
   channel: alpha
   installPlanApproval: Automatic
-  name: keycloak-operator
-  source: community-operators
+  name: rhsso-operator
+  source: redhat-operators
   sourceNamespace: openshift-marketplace

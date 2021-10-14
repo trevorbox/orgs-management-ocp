@@ -14,7 +14,7 @@ spec:
           name: allow-from-same-namespace
           namespace: {{ .Name }}
         spec:
-          podSelector:
+          podSelector: {}
           ingress:
           - from:
             - podSelector: {}

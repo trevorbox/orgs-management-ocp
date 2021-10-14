@@ -65,10 +65,11 @@ oc create route reencrypt keycloak --port 8443 --service keycloak -n keycloak-op
 
 ```shell
 export admin_password=$(oc get secret credential-ocp-keycloak -n keycloak-operator -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d)
-oc exec -n keycloak-operator keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080/auth --realm master --user admin --password ${admin_password} --config /tmp/kcadm.config
-export ldap_integration_id=$(cat ./keycloak/ldap-federation.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f - -i)
+export keycloak_podip=$(oc get pod keycloak-0 -n keycloak-operator -o jsonpath={.status.podIP})
+oc exec -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh config credentials --server http://${keycloak_podip}/auth --realm master --user admin --password ${admin_password} --config /tmp/kcadm.config
+export ldap_integration_id=$(cat ./keycloak/ldap-federation.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f - -i)
 echo created ldap integration $ldap_integration_id
-cat ./keycloak/role-mapper.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/jboss/keycloak/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f -
+cat ./keycloak/role-mapper.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f -
 ```
 
 After this step, if you should be able to login RH-SSO
@@ -104,11 +105,19 @@ export keycloak_route=$(oc get route keycloak -n keycloak-operator -o jsonpath='
 export auth_callback=$(oc get route oauth-openshift -n openshift-authentication -o jsonpath='{.spec.host}')/oauth2callback
 cat ./ocp-auth/keycloak-client.yaml | envsubst | oc apply -f - -n keycloak-operator
 oc apply -f ./ocp-auth/secret.yaml
-oc get secrets -n openshift-ingress-operator router-ca -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/ca.crt
+# oc get secrets -n openshift-ingress-operator router-ca -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/ca.crt
+# Note: the ingress certs may be different for your environment
+oc get secrets -n openshift-ingress ingress-certs-2021-09-20 -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/ca.crt
+
 oc -n openshift-config create configmap ocp-ca-bundle --from-file=/tmp/ca.crt
-export oauth_patch=$(cat ./ocp-auth/oauth.yaml | envsubst | yq .)
+
+export oauth_patch=$(cat ./ocp-auth/oauth.yaml | envsubst | yq e -o=j)
 oc patch OAuth.config.openshift.io cluster -p '[{"op": "add", "path": "/spec/identityProviders/-", "value": '"${oauth_patch}"' }]' --type json
 ```
+
+
+
+
 
 ## OCP - RH-SSO Group Sync
 
@@ -124,7 +133,7 @@ oc apply -f ./group-sync/operator.yaml -n group-sync-operator
 ```shell
 export keycloak_route=$(oc get route keycloak -n keycloak-operator -o jsonpath='{.spec.host}')
 export admin_password=$(oc get secret credential-ocp-keycloak -n keycloak-operator -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d)
-oc create secret generic keycloak-group-sync --from-literal=username=admin --from-literal=password=${admin_password} -n keycloak-operator
+oc create secret generic keycloak-group-sync --from-literal=username=admin --from-literal=password=${admin_password} -n group-sync-operator
 cat ./group-sync/groupsync.yaml | envsubst | oc apply -f -
 ```
 

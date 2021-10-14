@@ -12,5 +12,5 @@ spec:
         url: https://${keycloak_route}
         credentialsSecret:
           name: keycloak-group-sync
-          namespace: keycloak-operator
+          namespace: group-sync-operator
         
