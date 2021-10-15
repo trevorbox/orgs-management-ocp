@@ -66,7 +66,7 @@ oc create route reencrypt keycloak --port 8443 --service keycloak -n keycloak-op
 ```shell
 export admin_password=$(oc get secret credential-ocp-keycloak -n keycloak-operator -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d)
 export keycloak_podip=$(oc get pod keycloak-0 -n keycloak-operator -o jsonpath={.status.podIP})
-oc exec -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh config credentials --server http://${keycloak_podip}/auth --realm master --user admin --password ${admin_password} --config /tmp/kcadm.config
+oc exec -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh config credentials --server http://${keycloak_podip}:8080/auth --realm master --user admin --password ${admin_password} --config /tmp/kcadm.config
 export ldap_integration_id=$(cat ./keycloak/ldap-federation.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f - -i)
 echo created ldap integration $ldap_integration_id
 cat ./keycloak/role-mapper.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f -
