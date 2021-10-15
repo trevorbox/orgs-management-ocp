@@ -115,10 +115,6 @@ export oauth_patch=$(cat ./ocp-auth/oauth.yaml | envsubst | yq e -o=j)
 oc patch OAuth.config.openshift.io cluster -p '[{"op": "add", "path": "/spec/identityProviders/-", "value": '"${oauth_patch}"' }]' --type json
 ```
 
-
-
-
-
 ## OCP - RH-SSO Group Sync
 
 ### Deploy the group sync operator
@@ -126,6 +122,18 @@ oc patch OAuth.config.openshift.io cluster -p '[{"op": "add", "path": "/spec/ide
 ```shell
 oc new-project group-sync-operator
 oc apply -f ./group-sync/operator.yaml -n group-sync-operator
+```
+
+OR
+
+```sh
+helm repo add group-sync-operator https://redhat-cop.github.io/group-sync-operator
+helm repo update
+helm install group-sync-operator group-sync-operator/group-sync-operator \
+  --set image.repository=quay.io/trevorbox/group-sync-operator \
+  --set image.version=latest \
+  -n group-sync-operator \
+  --create-namespace
 ```
 
 ### Deploy group sync logic
@@ -215,3 +223,20 @@ echo https://$oauth_ingress/productpage
 ```
 
 point your browser to the last URL printed in the last line.
+
+
+## test api
+
+```sh
+export admin_password=$(oc get secret credential-ocp-keycloak -n keycloak-operator -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d)
+export keycloak_podip=$(oc get pod keycloak-0 -n keycloak-operator -o jsonpath={.status.podIP})
+oc exec -n keycloak-operator keycloak-0 -- curl http://${keycloak_podip}:8080/ocp/groups
+
+
+
+oc exec -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh config credentials --server http://${keycloak_podip}:8080/auth --realm master --user admin --password ${admin_password} --config /tmp/kcadm.config
+export ldap_integration_id=$(cat ./keycloak/ldap-federation.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f - -i)
+echo created ldap integration $ldap_integration_id
+cat ./keycloak/role-mapper.json | envsubst | oc exec -i -n keycloak-operator keycloak-0 -- /opt/eap/bin/kcadm.sh create components --config /tmp/kcadm.config -r ocp -f -
+```
+
