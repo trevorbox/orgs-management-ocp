@@ -16,14 +16,14 @@ export TKN=$(curl -X POST "https://${keycloak_route}/auth/realms/master/protocol
  -d 'grant_type=password' \
  -d 'client_id=admin-cli' | jq -r '.access_token')
 
-curl -X GET "https://${keycloak_route}/auth/admin/realms" \
--H "Accept: application/json" \
--H "Authorization: Bearer $TKN" | jq .
+# curl -X GET "https://${keycloak_route}/auth/admin/realms" \
+# -H "Accept: application/json" \
+# -H "Authorization: Bearer $TKN" | jq .
 
 curl -X GET "https://${keycloak_route}/auth/admin/realms/ocp/groups" \
 -H "Accept: application/json" \
--H "Authorization: Bearer $TKN" | jq .
+-H "Authorization: Bearer $TKN" | jq . > out.json
 
-curl -X GET "https://${keycloak_route}/auth/admin/realms/ocp/groups/e8af1625-83be-48b2-afb4-44311a1a27e4" \
--H "Accept: application/json" \
--H "Authorization: Bearer $TKN" | jq .
+# curl -X GET "https://${keycloak_route}/auth/admin/realms/ocp/groups/e8af1625-83be-48b2-afb4-44311a1a27e4" \
+# -H "Accept: application/json" \
+# -H "Authorization: Bearer $TKN" | jq .
